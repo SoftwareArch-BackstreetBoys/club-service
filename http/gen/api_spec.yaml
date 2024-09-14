@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: Club Management API
+  version: 1.0.0
+paths:
+  /clubs:
+    get:
+      summary: Get all clubs
+      operationId: GetAllClubs
+      responses:
+        '200':
+          description: A list of clubs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Club'
+    post:
+      summary: Create a new club
+      operationId: CreateClub
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Club'
+      responses:
+        '201':
+          description: Club created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+  /clubs/{clubId}:
+    get:
+      summary: Get club info
+      operationId: GetClubInfo
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Club information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+  /clubs/{clubId}/join:
+    post:
+      summary: Join a club
+      operationId: JoinClub
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: 
+                - userId
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Successfully joined
+  /clubs/{clubId}/leave:
+    post:
+      summary: Leave a club
+      operationId: LeaveClub
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Successfully left
+  /clubs/{clubId}/is-belong:
+    get:
+      summary: Check if a user belongs to the club
+      operationId: IsBelongToClub
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Whether the user belongs to the club
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isBelong:
+                    type: boolean
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+  /clubs/user/{userId}:
+    get:
+      summary: Get clubs joined by the user
+      operationId: GetJoinedClub
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Clubs joined by the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Club'
+  /clubs/search:
+    get:
+      summary: Search clubs by keyword
+      operationId: SearchClubs
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of clubs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Club'
+components:
+  schemas:
+    Club:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
