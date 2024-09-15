@@ -74,7 +74,7 @@ func (self *repository) GetClubs(ctx context.Context, clubIDs []string) ([]model
 	}
 	defer cursor.Close(ctx)
 
-	var clubs []model.Club
+	clubs := make([]model.Club, 0)
 	if err = cursor.All(ctx, &clubs); err != nil {
 		return nil, err
 	}
