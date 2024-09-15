@@ -57,7 +57,7 @@ func (self *repository) GetClubMemberShip(ctx context.Context, clubID string, us
 	err := collection.FindOne(ctx, filter).Decode(&membership)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, errors.New("membership not found")
+			return nil, nil
 		}
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func (self *repository) GetJoinedClubIDS(ctx context.Context, userID string) ([]
 	}
 	defer cursor.Close(ctx)
 
-	var clubIDs []string
+	clubIDs := make([]string, 0)
 	for cursor.Next(ctx) {
 		var membership model.ClubMembership
 		if err := cursor.Decode(&membership); err != nil {
