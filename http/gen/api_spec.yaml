@@ -16,6 +16,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Club'
+  /club:
     post:
       summary: Create a new club
       operationId: CreateClub
@@ -32,7 +33,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Club'
-  /clubs/{clubId}:
+  /club/{clubId}:
     get:
       summary: Get club info
       operationId: GetClubInfo

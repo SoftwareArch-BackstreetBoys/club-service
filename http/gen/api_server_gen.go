@@ -13,21 +13,21 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Create a new club
+	// (POST /club)
+	CreateClub(c *fiber.Ctx) error
+	// Get club info
+	// (GET /club/{clubId})
+	GetClubInfo(c *fiber.Ctx, clubId string) error
 	// Get all clubs
 	// (GET /clubs)
 	GetAllClubs(c *fiber.Ctx) error
-	// Create a new club
-	// (POST /clubs)
-	CreateClub(c *fiber.Ctx) error
 	// Search clubs by keyword
 	// (GET /clubs/search)
 	SearchClubs(c *fiber.Ctx, params SearchClubsParams) error
 	// Get clubs joined by the user
 	// (GET /clubs/user/{userId})
 	GetJoinedClub(c *fiber.Ctx, userId string) error
-	// Get club info
-	// (GET /clubs/{clubId})
-	GetClubInfo(c *fiber.Ctx, clubId string) error
 	// Check if a user belongs to the club
 	// (GET /clubs/{clubId}/is-belong)
 	IsBelongToClub(c *fiber.Ctx, clubId string, params IsBelongToClubParams) error
@@ -46,16 +46,32 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc fiber.Handler
 
-// GetAllClubs operation middleware
-func (siw *ServerInterfaceWrapper) GetAllClubs(c *fiber.Ctx) error {
-
-	return siw.Handler.GetAllClubs(c)
-}
-
 // CreateClub operation middleware
 func (siw *ServerInterfaceWrapper) CreateClub(c *fiber.Ctx) error {
 
 	return siw.Handler.CreateClub(c)
+}
+
+// GetClubInfo operation middleware
+func (siw *ServerInterfaceWrapper) GetClubInfo(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "clubId" -------------
+	var clubId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "clubId", c.Params("clubId"), &clubId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter clubId: %w", err).Error())
+	}
+
+	return siw.Handler.GetClubInfo(c, clubId)
+}
+
+// GetAllClubs operation middleware
+func (siw *ServerInterfaceWrapper) GetAllClubs(c *fiber.Ctx) error {
+
+	return siw.Handler.GetAllClubs(c)
 }
 
 // SearchClubs operation middleware
@@ -104,22 +120,6 @@ func (siw *ServerInterfaceWrapper) GetJoinedClub(c *fiber.Ctx) error {
 	}
 
 	return siw.Handler.GetJoinedClub(c, userId)
-}
-
-// GetClubInfo operation middleware
-func (siw *ServerInterfaceWrapper) GetClubInfo(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "clubId" -------------
-	var clubId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "clubId", c.Params("clubId"), &clubId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter clubId: %w", err).Error())
-	}
-
-	return siw.Handler.GetClubInfo(c, clubId)
 }
 
 // IsBelongToClub operation middleware
@@ -215,15 +215,15 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(fiber.Handler(m))
 	}
 
-	router.Get(options.BaseURL+"/clubs", wrapper.GetAllClubs)
+	router.Post(options.BaseURL+"/club", wrapper.CreateClub)
 
-	router.Post(options.BaseURL+"/clubs", wrapper.CreateClub)
+	router.Get(options.BaseURL+"/club/:clubId", wrapper.GetClubInfo)
+
+	router.Get(options.BaseURL+"/clubs", wrapper.GetAllClubs)
 
 	router.Get(options.BaseURL+"/clubs/search", wrapper.SearchClubs)
 
 	router.Get(options.BaseURL+"/clubs/user/:userId", wrapper.GetJoinedClub)
-
-	router.Get(options.BaseURL+"/clubs/:clubId", wrapper.GetClubInfo)
 
 	router.Get(options.BaseURL+"/clubs/:clubId/is-belong", wrapper.IsBelongToClub)
 
