@@ -165,6 +165,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Club'
+  /health:
+    get:
+      summary: Health Check
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
 components:
   schemas:
     Club:
