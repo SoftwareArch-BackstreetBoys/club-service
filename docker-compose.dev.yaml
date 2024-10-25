@@ -1,7 +1,7 @@
 services:
   club-services:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./
     volumes:
       - ./:/app

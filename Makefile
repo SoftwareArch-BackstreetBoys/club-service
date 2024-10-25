@@ -12,5 +12,5 @@ gen:
 run:
 	go run main.go
 
-compose:
-	docker-compose up
+compose-dev:
+	docker-compose -f docker-compose.dev.yaml up
