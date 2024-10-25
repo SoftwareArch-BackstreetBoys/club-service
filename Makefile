@@ -14,3 +14,12 @@ run:
 
 compose-dev:
 	docker-compose -f docker-compose.dev.yaml up
+
+compose:
+	docker-compose -f docker-compose.yaml up
+
+compose-dev-down:
+	docker-compose -f docker-compose.dev.yaml down
+
+compose-down:
+	docker-compose -f docker-compose.yaml down
