@@ -49,8 +49,13 @@ func (h *Http) SearchClubs(c *fiber.Ctx, params api_gen.SearchClubsParams) error
 	return c.Status(fiber.StatusOK).JSON(clubs)
 }
 
-func (h *Http) GetJoinedClub(c *fiber.Ctx, userId string) error {
-	clubs, err := h.app.GetJoinedClub(context.Background(), userId)
+func (h *Http) GetJoinedClub(c *fiber.Ctx) error {
+	var requestBody api_gen.GetJoinedClubJSONBody
+	if err := c.BodyParser(&requestBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	}
+
+	clubs, err := h.app.GetJoinedClub(context.Background(), requestBody.UserId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
