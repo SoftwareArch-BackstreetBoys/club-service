@@ -96,12 +96,13 @@ func (h *Http) JoinClub(c *fiber.Ctx, clubId string) error {
 }
 
 func (h *Http) LeaveClub(c *fiber.Ctx, clubId string) error {
-	var body api_gen.LeaveClubJSONRequestBody
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	userId, err := auth_util.GetUserIdFromFiberContext(c)
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
 	}
 
-	err := h.app.LeaveClub(context.Background(), clubId, body.UserId)
+	err = h.app.LeaveClub(context.Background(), clubId, userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
