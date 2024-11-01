@@ -1,6 +1,7 @@
 package auth_util
 
 import (
+	"errors"
 	"log"
 	"os"
 
@@ -25,12 +26,17 @@ func init() {
 	JWT_SECRET = os.Getenv("JWT_SECRET")
 }
 
-func GetUserId(jwtToken string) string {
+func GetUserId(jwtToken string) (string, error) {
 	parsedToken, _ := jwt.ParseWithClaims(jwtToken, &UserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(JWT_SECRET), nil
 	})
 
+	if !parsedToken.Valid {
+		// comment this "if" if you want to test with expired token
+		return "", errors.New("invalid token")
+	}
+
 	userClaims := parsedToken.Claims.(*UserClaims)
 
-	return userClaims.Id
+	return userClaims.Id, nil
 }
