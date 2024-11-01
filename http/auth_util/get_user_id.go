@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/joho/godotenv"
 )
@@ -39,4 +40,13 @@ func GetUserId(jwtToken string) (string, error) {
 	userClaims := parsedToken.Claims.(*UserClaims)
 
 	return userClaims.Id, nil
+}
+
+func GetUserIdFromFiberContext(c *fiber.Ctx) (string, error) {
+	jwtToken := c.Cookies("jwt")
+	if jwtToken == "" {
+		return "", errors.New("jwt token not found")
+	}
+
+	return GetUserId(jwtToken)
 }
