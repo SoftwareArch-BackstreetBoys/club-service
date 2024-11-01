@@ -15,34 +15,10 @@ type SearchClubsParams struct {
 	Keyword string `form:"keyword" json:"keyword"`
 }
 
-// GetJoinedClubJSONBody defines parameters for GetJoinedClub.
-type GetJoinedClubJSONBody struct {
-	UserId string `json:"userId"`
-}
-
 // IsBelongToClubParams defines parameters for IsBelongToClub.
 type IsBelongToClubParams struct {
 	UserId string `form:"userId" json:"userId"`
 }
 
-// JoinClubJSONBody defines parameters for JoinClub.
-type JoinClubJSONBody struct {
-	UserId string `json:"userId"`
-}
-
-// LeaveClubJSONBody defines parameters for LeaveClub.
-type LeaveClubJSONBody struct {
-	UserId string `json:"userId"`
-}
-
 // CreateClubJSONRequestBody defines body for CreateClub for application/json ContentType.
 type CreateClubJSONRequestBody = Club
-
-// GetJoinedClubJSONRequestBody defines body for GetJoinedClub for application/json ContentType.
-type GetJoinedClubJSONRequestBody GetJoinedClubJSONBody
-
-// JoinClubJSONRequestBody defines body for JoinClub for application/json ContentType.
-type JoinClubJSONRequestBody JoinClubJSONBody
-
-// LeaveClubJSONRequestBody defines body for LeaveClub for application/json ContentType.
-type LeaveClubJSONRequestBody LeaveClubJSONBody
