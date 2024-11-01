@@ -2,8 +2,10 @@ package http_server
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/SoftwareArch-BackstreetBoys/club-service/application"
+	"github.com/SoftwareArch-BackstreetBoys/club-service/http/auth_util"
 	api_gen "github.com/SoftwareArch-BackstreetBoys/club-service/http/gen"
 	"github.com/SoftwareArch-BackstreetBoys/club-service/model"
 	"github.com/gofiber/fiber/v2"
@@ -50,12 +52,13 @@ func (h *Http) SearchClubs(c *fiber.Ctx, params api_gen.SearchClubsParams) error
 }
 
 func (h *Http) GetJoinedClub(c *fiber.Ctx) error {
-	var requestBody api_gen.GetJoinedClubJSONBody
-	if err := c.BodyParser(&requestBody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	userId, err := auth_util.GetUserIdFromFiberContext(c)
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
 	}
 
-	clubs, err := h.app.GetJoinedClub(context.Background(), requestBody.UserId)
+	clubs, err := h.app.GetJoinedClub(context.Background(), userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
