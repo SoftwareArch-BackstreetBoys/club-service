@@ -28,9 +28,13 @@ func init() {
 }
 
 func GetUserId(jwtToken string) (string, error) {
-	parsedToken, _ := jwt.ParseWithClaims(jwtToken, &UserClaims{}, func(t *jwt.Token) (interface{}, error) {
+	parsedToken, err := jwt.ParseWithClaims(jwtToken, &UserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(JWT_SECRET), nil
 	})
+
+	if err != nil {
+		return "", err
+	}
 
 	if !parsedToken.Valid {
 		// comment this "if" if you want to test with expired token
