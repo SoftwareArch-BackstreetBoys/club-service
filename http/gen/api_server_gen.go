@@ -37,6 +37,12 @@ type ServerInterface interface {
 	// Leave a club
 	// (POST /clubs/{clubId}/leave)
 	LeaveClub(c *fiber.Ctx, clubId string) error
+	// Health Check
+	// (GET /health/database)
+	GetHealthDatabase(c *fiber.Ctx) error
+	// Health Check
+	// (GET /health/service)
+	GetHealthService(c *fiber.Ctx) error
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -184,6 +190,18 @@ func (siw *ServerInterfaceWrapper) LeaveClub(c *fiber.Ctx) error {
 	return siw.Handler.LeaveClub(c, clubId)
 }
 
+// GetHealthDatabase operation middleware
+func (siw *ServerInterfaceWrapper) GetHealthDatabase(c *fiber.Ctx) error {
+
+	return siw.Handler.GetHealthDatabase(c)
+}
+
+// GetHealthService operation middleware
+func (siw *ServerInterfaceWrapper) GetHealthService(c *fiber.Ctx) error {
+
+	return siw.Handler.GetHealthService(c)
+}
+
 // FiberServerOptions provides options for the Fiber server.
 type FiberServerOptions struct {
 	BaseURL     string
@@ -220,5 +238,9 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	router.Post(options.BaseURL+"/clubs/:clubId/join", wrapper.JoinClub)
 
 	router.Post(options.BaseURL+"/clubs/:clubId/leave", wrapper.LeaveClub)
+
+	router.Get(options.BaseURL+"/health/database", wrapper.GetHealthDatabase)
+
+	router.Get(options.BaseURL+"/health/service", wrapper.GetHealthService)
 
 }

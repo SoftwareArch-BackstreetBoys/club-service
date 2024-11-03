@@ -137,6 +137,34 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Club'
+  /health/service:
+    get:
+      summary: Health Check
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy\
+  /health/database:
+    get:
+      summary: Health Check
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
 components:
   schemas:
     Club:

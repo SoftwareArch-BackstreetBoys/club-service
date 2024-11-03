@@ -108,3 +108,25 @@ func (h *Http) LeaveClub(c *fiber.Ctx, clubId string) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Successfully left"})
 }
+
+func (h *Http) GetHealthService(c *fiber.Ctx) error {
+	serviceStatus := "Service is running"
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"service":  serviceStatus,
+	})
+}
+
+func (h *Http) GetHealthDatabase(c *fiber.Ctx) error {
+	dbErr := h.app.CheckDatabaseConnection(context.Background())
+	var dbStatus string
+	if dbErr != nil {
+		dbStatus = "Database connection failed: " + dbErr.Error()
+	} else {
+		dbStatus = "Database connection is healthy"
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"database": dbStatus,
+	})
+}

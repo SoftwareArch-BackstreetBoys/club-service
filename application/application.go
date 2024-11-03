@@ -17,6 +17,7 @@ type Application interface {
 	IsBelongToClub(ctx context.Context, clubID string, userID string) (bool, error)
 	SearchClubs(ctx context.Context, keyword string) ([]model.Club, error)
 	GetAllClubs(ctx context.Context) ([]model.Club, error)
+	CheckDatabaseConnection(ctx context.Context) error
 }
 
 type application struct {
@@ -77,4 +78,8 @@ func (self *application) SearchClubs(ctx context.Context, keyword string) ([]mod
 
 func (self *application) GetAllClubs(ctx context.Context) ([]model.Club, error) {
 	return self.repository.GetAllClubs(ctx)
+}
+
+func (self *application) CheckDatabaseConnection(ctx context.Context) error {
+	return self.repository.PingDatabase(ctx)
 }

@@ -44,6 +44,9 @@ type Repository interface {
 	GetClubMemberShip(ctx context.Context, clubID string, userID string) (*model.ClubMembership, error)
 	DeleteClubMemberShip(ctx context.Context, clubID string, userID string) error
 	GetJoinedClubIDS(ctx context.Context, userID string) ([]string, error)
+
+	// health check
+	PingDatabase(ctx context.Context) error
 }
 
 type repository struct {
@@ -87,4 +90,8 @@ func connectMongoDB(mongoURI string) *mongo.Database {
 
 	fmt.Println("Connected to MongoDB")
 	return client.Database(MONGO_DATABASE)
+}
+
+func (r *repository) PingDatabase(ctx context.Context) error {
+	return r.mongoDB.Client().Ping(ctx, nil)
 }
