@@ -109,9 +109,15 @@ func (h *Http) LeaveClub(c *fiber.Ctx, clubId string) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Successfully left"})
 }
 
-func (h *Http) GetHealth(c *fiber.Ctx) error {
+func (h *Http) GetHealthService(c *fiber.Ctx) error {
 	serviceStatus := "Service is running"
 
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"service":  serviceStatus,
+	})
+}
+
+func (h *Http) GetHealthDatabase(c *fiber.Ctx) error {
 	dbErr := h.app.CheckDatabaseConnection(context.Background())
 	var dbStatus string
 	if dbErr != nil {
@@ -121,7 +127,6 @@ func (h *Http) GetHealth(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"service":  serviceStatus,
 		"database": dbStatus,
 	})
 }
