@@ -60,17 +60,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: 
-                - userId
-              properties:
-                userId:
-                  type: string
       responses:
         '200':
           description: Successfully joined
@@ -84,17 +73,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - userId
-              properties:
-                userId:
-                  type: string
       responses:
         '200':
           description: Successfully left
@@ -127,16 +105,10 @@ paths:
           description: Invalid request
         '500':
           description: Internal server error
-  /clubs/user/{userId}:
+  /clubs/user:
     get:
       summary: Get clubs joined by the user
       operationId: GetJoinedClub
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Clubs joined by the user

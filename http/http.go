@@ -2,8 +2,10 @@ package http_server
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/SoftwareArch-BackstreetBoys/club-service/application"
+	"github.com/SoftwareArch-BackstreetBoys/club-service/http/auth_util"
 	api_gen "github.com/SoftwareArch-BackstreetBoys/club-service/http/gen"
 	"github.com/SoftwareArch-BackstreetBoys/club-service/model"
 	"github.com/gofiber/fiber/v2"
@@ -49,7 +51,13 @@ func (h *Http) SearchClubs(c *fiber.Ctx, params api_gen.SearchClubsParams) error
 	return c.Status(fiber.StatusOK).JSON(clubs)
 }
 
-func (h *Http) GetJoinedClub(c *fiber.Ctx, userId string) error {
+func (h *Http) GetJoinedClub(c *fiber.Ctx) error {
+	userId, err := auth_util.GetUserIdFromFiberContext(c)
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
+	}
+
 	clubs, err := h.app.GetJoinedClub(context.Background(), userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -74,12 +82,13 @@ func (h *Http) IsBelongToClub(c *fiber.Ctx, clubId string, params api_gen.IsBelo
 }
 
 func (h *Http) JoinClub(c *fiber.Ctx, clubId string) error {
-	var body api_gen.JoinClubJSONRequestBody
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	userId, err := auth_util.GetUserIdFromFiberContext(c)
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
 	}
 
-	err := h.app.JoinClub(context.Background(), clubId, body.UserId)
+	err = h.app.JoinClub(context.Background(), clubId, userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -87,12 +96,13 @@ func (h *Http) JoinClub(c *fiber.Ctx, clubId string) error {
 }
 
 func (h *Http) LeaveClub(c *fiber.Ctx, clubId string) error {
-	var body api_gen.LeaveClubJSONRequestBody
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	userId, err := auth_util.GetUserIdFromFiberContext(c)
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
 	}
 
-	err := h.app.LeaveClub(context.Background(), clubId, body.UserId)
+	err = h.app.LeaveClub(context.Background(), clubId, userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

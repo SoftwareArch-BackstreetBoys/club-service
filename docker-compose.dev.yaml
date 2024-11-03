@@ -1,7 +1,7 @@
 services:
-  club-services-prod:
+  club-services:
     build:
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./
     volumes:
       - ./:/app
