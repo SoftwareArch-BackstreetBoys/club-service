@@ -30,8 +30,9 @@ func main() {
 
 	// Enable CORS for all routes, allowing localhost:5555 as an origin
 	fiberApp.Use(cors.New(cors.Config{
-		AllowOrigins: os.Getenv("FRONTENT_ROUTE"), // Allow your frontend's origin
-		AllowMethods: "GET,POST,PUT,DELETE",       // You can specify the methods allowed
+		AllowOrigins:     os.Getenv("FRONTENT_ROUTE"), // Allow your frontend's origin
+		AllowMethods:     "GET,POST,PUT,DELETE",       // You can specify the methods allowed
+		AllowCredentials: true,                        // Allow credentials like cookies
 	}))
 
 	api_gen.RegisterHandlers(fiberApp, http)
