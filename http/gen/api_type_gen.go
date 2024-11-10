@@ -5,9 +5,11 @@ package api_gen
 
 // Club defines model for Club.
 type Club struct {
-	Description string  `json:"description"`
-	Id          *string `json:"id,omitempty"`
-	Name        string  `json:"name"`
+	CreatedByFullName *string `json:"created_by_full_name,omitempty"`
+	CreatedById       *string `json:"created_by_id,omitempty"`
+	Description       string  `json:"description"`
+	Id                *string `json:"id,omitempty"`
+	Name              string  `json:"name"`
 }
 
 // SearchClubsParams defines parameters for SearchClubs.

@@ -13,7 +13,8 @@ import (
 type UserClaims struct {
 	jwt.StandardClaims
 
-	Id string `json:"id"`
+	Id       string `json:"id"`
+	FullName string `json:"fullName"`
 }
 
 var JWT_SECRET string
@@ -27,30 +28,30 @@ func init() {
 	JWT_SECRET = os.Getenv("JWT_SECRET")
 }
 
-func GetUserId(jwtToken string) (string, error) {
+func GetUserFromJWTToken(jwtToken string) (*UserClaims, error) {
 	parsedToken, err := jwt.ParseWithClaims(jwtToken, &UserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(JWT_SECRET), nil
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	if !parsedToken.Valid {
 		// comment this "if" if you want to test with expired token
-		return "", errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	userClaims := parsedToken.Claims.(*UserClaims)
 
-	return userClaims.Id, nil
+	return userClaims, nil
 }
 
-func GetUserIdFromFiberContext(c *fiber.Ctx) (string, error) {
+func GetUserFromFiberContext(c *fiber.Ctx) (*UserClaims, error) {
 	jwtToken := c.Cookies("jwt")
 	if jwtToken == "" {
-		return "", errors.New("jwt token not found")
+		return nil, errors.New("jwt token not found")
 	}
 
-	return GetUserId(jwtToken)
+	return GetUserFromJWTToken(jwtToken)
 }
