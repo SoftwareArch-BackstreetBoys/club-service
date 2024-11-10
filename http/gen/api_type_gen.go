@@ -12,6 +12,12 @@ type Club struct {
 	Name              string  `json:"name"`
 }
 
+// ClubPatchInfo defines model for ClubPatchInfo.
+type ClubPatchInfo struct {
+	Description *string `json:"description,omitempty"`
+	Name        *string `json:"name,omitempty"`
+}
+
 // SearchClubsParams defines parameters for SearchClubs.
 type SearchClubsParams struct {
 	Keyword string `form:"keyword" json:"keyword"`
@@ -24,3 +30,6 @@ type IsBelongToClubParams struct {
 
 // CreateClubJSONRequestBody defines body for CreateClub for application/json ContentType.
 type CreateClubJSONRequestBody = Club
+
+// PatchClubInfoJSONRequestBody defines body for PatchClubInfo for application/json ContentType.
+type PatchClubInfoJSONRequestBody = ClubPatchInfo

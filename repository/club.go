@@ -9,6 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func (self *repository) UpdateClub(ctx context.Context, updatedClub model.Club) (*model.Club, error) {
+	collection := self.mongoDB.Collection(CLUB_COLLECTION_NAME)
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": updatedClub.ID}, bson.M{"$set": updatedClub})
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedClub, nil
+}
+
 // CreateClub inserts a new club into the clubs collection.
 func (self *repository) CreateClub(ctx context.Context, club model.Club) (*model.Club, error) {
 	collection := self.mongoDB.Collection(CLUB_COLLECTION_NAME)

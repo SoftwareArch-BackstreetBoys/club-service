@@ -7,3 +7,8 @@ type Club struct {
 	CreatedByID       string `bson:"created_by_id" json:"created_by_id"`
 	CreatedByFullName string `bson:"created_by_full_name" json:"created_by_full_name"`
 }
+
+type UpdateClubInfo struct {
+	Name        *string
+	Description *string
+}

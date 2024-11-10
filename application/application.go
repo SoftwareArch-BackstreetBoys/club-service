@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/SoftwareArch-BackstreetBoys/club-service/model"
 	"github.com/SoftwareArch-BackstreetBoys/club-service/repository"
@@ -17,6 +18,8 @@ type Application interface {
 	IsBelongToClub(ctx context.Context, clubID string, userID string) (bool, error)
 	SearchClubs(ctx context.Context, keyword string) ([]model.Club, error)
 	GetAllClubs(ctx context.Context) ([]model.Club, error)
+	UpdateClub(ctx context.Context, clubID string, updateClubInfo model.UpdateClubInfo) (*model.Club, error)
+
 	CheckDatabaseConnection(ctx context.Context) error
 }
 
@@ -28,6 +31,25 @@ func NewApplication(repository repository.Repository) Application {
 	return &application{
 		repository: repository,
 	}
+}
+
+func (self *application) UpdateClub(ctx context.Context, clubID string, updateClubInfo model.UpdateClubInfo) (*model.Club, error) {
+	club, err := self.repository.GetClub(ctx, clubID)
+	if err != nil {
+		return nil, err
+	}
+
+	if updateClubInfo.Name != nil {
+		club.Name = *updateClubInfo.Name
+	}
+
+	if updateClubInfo.Description != nil {
+		club.Description = *updateClubInfo.Description
+	}
+
+	fmt.Printf("%v", club)
+
+	return self.repository.UpdateClub(ctx, *club)
 }
 
 func (self *application) CreateClub(ctx context.Context, club model.Club) (*model.Club, error) {

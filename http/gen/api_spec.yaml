@@ -50,6 +50,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Club'
+    patch:
+      summary: Patch club info
+      operationId: PatchClubInfo
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClubPatchInfo'
+      responses:
+        '200':
+          description: Club information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
   /clubs/{clubId}/join:
     post:
       summary: Join a club
@@ -182,4 +204,11 @@ components:
         created_by_id:
           type: string
         created_by_full_name:
+          type: string
+    ClubPatchInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
           type: string

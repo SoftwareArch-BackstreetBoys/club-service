@@ -19,6 +19,9 @@ type ServerInterface interface {
 	// Get club info
 	// (GET /club/{clubId})
 	GetClubInfo(c *fiber.Ctx, clubId string) error
+	// Patch club info
+	// (PATCH /club/{clubId})
+	PatchClubInfo(c *fiber.Ctx, clubId string) error
 	// Get all clubs
 	// (GET /clubs)
 	GetAllClubs(c *fiber.Ctx) error
@@ -72,6 +75,22 @@ func (siw *ServerInterfaceWrapper) GetClubInfo(c *fiber.Ctx) error {
 	}
 
 	return siw.Handler.GetClubInfo(c, clubId)
+}
+
+// PatchClubInfo operation middleware
+func (siw *ServerInterfaceWrapper) PatchClubInfo(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "clubId" -------------
+	var clubId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "clubId", c.Params("clubId"), &clubId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter clubId: %w", err).Error())
+	}
+
+	return siw.Handler.PatchClubInfo(c, clubId)
 }
 
 // GetAllClubs operation middleware
@@ -226,6 +245,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	router.Post(options.BaseURL+"/club", wrapper.CreateClub)
 
 	router.Get(options.BaseURL+"/club/:clubId", wrapper.GetClubInfo)
+
+	router.Patch(options.BaseURL+"/club/:clubId", wrapper.PatchClubInfo)
 
 	router.Get(options.BaseURL+"/clubs", wrapper.GetAllClubs)
 

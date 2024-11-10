@@ -19,6 +19,38 @@ func NewHttp(app application.Application) api_gen.ServerInterface {
 	return &Http{app: app}
 }
 
+func (h *Http) PatchClubInfo(c *fiber.Ctx, clubId string) error {
+	user, err := auth_util.GetUserFromFiberContext(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
+	}
+
+	club, err := h.app.GetClubInfo(context.Background(), clubId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "club not found"})
+	}
+
+	if club.CreatedByID != user.Id {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "you are not the club owner"})
+	}
+
+	var clubPatchInfo api_gen.PatchClubInfoJSONRequestBody
+	if err := c.BodyParser(&clubPatchInfo); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	}
+
+	updatedClub, err := h.app.UpdateClub(context.Background(), clubId, model.UpdateClubInfo{
+		Name:        clubPatchInfo.Name,
+		Description: clubPatchInfo.Description,
+	})
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to update club"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(updatedClub)
+}
+
 func (h *Http) GetAllClubs(c *fiber.Ctx) error {
 	clubs, err := h.app.GetAllClubs(context.Background())
 	if err != nil {
