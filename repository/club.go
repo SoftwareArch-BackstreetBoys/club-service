@@ -37,7 +37,7 @@ func (self *repository) GetAllClubs(ctx context.Context) ([]model.Club, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var clubs []model.Club
+	clubs := make([]model.Club, 0)
 	if err = cursor.All(ctx, &clubs); err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (self *repository) SearchClubs(ctx context.Context, keyword string) ([]mode
 	}
 	defer cursor.Close(ctx)
 
-	var clubs []model.Club
+	clubs := make([]model.Club, 0)
 	if err = cursor.All(ctx, &clubs); err != nil {
 		return nil, err
 	}
