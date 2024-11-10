@@ -9,6 +9,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func (self *repository) DeleteClub(ctx context.Context, clubID string) (*model.Club, error) {
+	collection := self.mongoDB.Collection(CLUB_COLLECTION_NAME)
+
+	clubToDelete, err := self.GetClub(ctx, clubID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = collection.DeleteOne(ctx, bson.M{"_id": clubID})
+	if err != nil {
+		return nil, err
+	}
+
+	return clubToDelete, nil
+}
+
 func (self *repository) UpdateClub(ctx context.Context, updatedClub model.Club) (*model.Club, error) {
 	collection := self.mongoDB.Collection(CLUB_COLLECTION_NAME)
 

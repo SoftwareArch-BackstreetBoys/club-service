@@ -19,6 +19,26 @@ func NewHttp(app application.Application) api_gen.ServerInterface {
 	return &Http{app: app}
 }
 
+func (h *Http) DeleteClub(c *fiber.Ctx, clubId string) error {
+	user, err := auth_util.GetUserFromFiberContext(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "invalid authentication"})
+	}
+
+	club, err := h.app.GetClubInfo(context.Background(), clubId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "club not found"})
+	}
+
+	if club.CreatedByID != user.Id {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "you are not the club owner"})
+	}
+
+	deletedClub, err := h.app.DeleteClub(context.Background(), clubId)
+
+	return c.Status(fiber.StatusOK).JSON(deletedClub)
+}
+
 func (h *Http) PatchClubInfo(c *fiber.Ctx, clubId string) error {
 	user, err := auth_util.GetUserFromFiberContext(c)
 	if err != nil {

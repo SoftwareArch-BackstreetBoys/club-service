@@ -19,6 +19,7 @@ type Application interface {
 	SearchClubs(ctx context.Context, keyword string) ([]model.Club, error)
 	GetAllClubs(ctx context.Context) ([]model.Club, error)
 	UpdateClub(ctx context.Context, clubID string, updateClubInfo model.UpdateClubInfo) (*model.Club, error)
+	DeleteClub(ctx context.Context, clubID string) (*model.Club, error)
 
 	CheckDatabaseConnection(ctx context.Context) error
 }
@@ -31,6 +32,10 @@ func NewApplication(repository repository.Repository) Application {
 	return &application{
 		repository: repository,
 	}
+}
+
+func (self *application) DeleteClub(ctx context.Context, clubID string) (*model.Club, error) {
+	return self.repository.DeleteClub(ctx, clubID)
 }
 
 func (self *application) UpdateClub(ctx context.Context, clubID string, updateClubInfo model.UpdateClubInfo) (*model.Club, error) {

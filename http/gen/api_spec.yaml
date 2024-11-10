@@ -34,6 +34,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Club'
   /club/{clubId}:
+    parameters:
+      - name: clubId
+        in: path
+        required: true
+        schema:
+          type: string
     get:
       summary: Get club info
       operationId: GetClubInfo
@@ -65,6 +71,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ClubPatchInfo'
+      responses:
+        '200':
+          description: Club information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+    delete:
+      summary: Delete Club
+      operationId: DeleteClub
+      paramters:
+        - name: clubId
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Club information

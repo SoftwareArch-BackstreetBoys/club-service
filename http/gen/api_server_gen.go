@@ -16,6 +16,9 @@ type ServerInterface interface {
 	// Create a new club
 	// (POST /club)
 	CreateClub(c *fiber.Ctx) error
+	// Delete Club
+	// (DELETE /club/{clubId})
+	DeleteClub(c *fiber.Ctx, clubId string) error
 	// Get club info
 	// (GET /club/{clubId})
 	GetClubInfo(c *fiber.Ctx, clubId string) error
@@ -59,6 +62,22 @@ type MiddlewareFunc fiber.Handler
 func (siw *ServerInterfaceWrapper) CreateClub(c *fiber.Ctx) error {
 
 	return siw.Handler.CreateClub(c)
+}
+
+// DeleteClub operation middleware
+func (siw *ServerInterfaceWrapper) DeleteClub(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "clubId" -------------
+	var clubId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "clubId", c.Params("clubId"), &clubId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter clubId: %w", err).Error())
+	}
+
+	return siw.Handler.DeleteClub(c, clubId)
 }
 
 // GetClubInfo operation middleware
@@ -243,6 +262,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	}
 
 	router.Post(options.BaseURL+"/club", wrapper.CreateClub)
+
+	router.Delete(options.BaseURL+"/club/:clubId", wrapper.DeleteClub)
 
 	router.Get(options.BaseURL+"/club/:clubId", wrapper.GetClubInfo)
 

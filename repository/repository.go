@@ -39,6 +39,7 @@ type Repository interface {
 	GetClubs(ctx context.Context, clubIDs []string) ([]model.Club, error)
 	SearchClubs(ctx context.Context, keyword string) ([]model.Club, error)
 	UpdateClub(ctx context.Context, newClub model.Club) (*model.Club, error)
+	DeleteClub(ctx context.Context, clubID string) (*model.Club, error)
 
 	// club_membership table
 	CreateClubMemberShip(ctx context.Context, clubID string, userID string) error
